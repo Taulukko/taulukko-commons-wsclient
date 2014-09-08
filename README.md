@@ -1,0 +1,4 @@
+commons-wsclient
+================
+
+Cliente REST
