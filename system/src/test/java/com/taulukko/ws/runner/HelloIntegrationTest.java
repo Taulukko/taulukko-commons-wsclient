@@ -29,7 +29,7 @@ public class HelloIntegrationTest {
 
 			@Override
 			public void run() {
-				String webappDirLocation = "src/test/webapps/";
+				String webappDirLocation = "src/main/resources/webapps";
 				tomcat = new Tomcat();
 
 				// The port that we should run on can be set into an environment
@@ -37,38 +37,37 @@ public class HelloIntegrationTest {
 				// Look for that variable and default to 8080 if it isn't there.
 				String webPort = System.getenv("PORT");
 				if (webPort == null || webPort.isEmpty()) {
-					webPort = "8080";
+					webPort = "8181";
 				}
 
 				tomcat.setPort(Integer.valueOf(webPort));
 
 				try {
+					Thread.sleep(1000);
 					tomcat.addWebapp("/",
 							new File(webappDirLocation).getAbsolutePath());
 
 					System.out.println("configuring app with basedir: "
-							+ new File("./" + webappDirLocation)
-									.getAbsolutePath());
+							+ new File(webappDirLocation).getAbsolutePath());
 
 					tomcat.start();
 					tomcat.getServer().await();
-				} catch (ServletException | LifecycleException e) {
+				} catch (ServletException | LifecycleException
+						| InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 
 		thread.start();
-		
-		while(tomcat==null)
-		{
+
+		while (tomcat == null) {
 			Thread.sleep(100);
 		}
-		
+
 		String state = tomcat.getServer().getStateName();
-		
-		while(!state.equals("STARTED"))
-		{
+
+		while (!state.equals("STARTED")) {
 			Thread.sleep(100);
 			state = tomcat.getServer().getStateName();
 		}
@@ -98,7 +97,7 @@ public class HelloIntegrationTest {
 		Assert.assertTrue(output.equals("3"));
 
 	}
-	
+
 	@Test
 	public void execPost() throws WSClientException, InterruptedException {
 
