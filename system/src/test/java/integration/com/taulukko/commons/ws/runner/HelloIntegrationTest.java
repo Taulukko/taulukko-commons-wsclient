@@ -1,4 +1,4 @@
-package com.taulukko.ws.runner;
+package integration.com.taulukko.commons.ws.runner;
 
 import java.io.File;
 import java.util.HashMap;

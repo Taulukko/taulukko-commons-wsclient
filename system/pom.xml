@@ -2,6 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<modelVersion>4.0.0</modelVersion>
+	
+	<organization>
+		<name>Taulukko</name>
+		<url>http://www.taulukko.com.br</url>
+	</organization>
 
 	<name>Webservice Client Taulukko</name>
 	<description>Framework to web service uses</description>
@@ -143,9 +148,10 @@
 				<version>2.18.1</version>
 				<configuration>
 					<excludes>
-						<exclude>integration/**/*Test.java</exclude>						
+						<exclude>write/**/*Test.java</exclude>						
 					</excludes>
 					<includes>
+						<include>integration/**/*Test.java</include>
 						<include>**/taulukko/**/*Test.java</include>
 					</includes>
 				</configuration>
@@ -202,8 +208,4 @@
 	</profiles>
 
 	
-	<organization>
-		<name>Taulukko</name>
-		<url>http://www.taulukko.com.br</url>
-	</organization>
 </project>
