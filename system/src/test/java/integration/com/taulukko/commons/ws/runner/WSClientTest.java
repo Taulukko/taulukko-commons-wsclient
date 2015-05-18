@@ -11,7 +11,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.taulukko.ws.client.RESTClientFactory;
@@ -79,30 +78,86 @@ public class WSClientTest {
 		tomcat.stop();
 	}
 
-	@Test 
-	public void execGet() throws WSClientException, InterruptedException {
+	@Test
+	public void execGetDirectQuery() throws WSClientException,
+			InterruptedException {
 
 		WSClient client = RESTClientFactory.getClient("util");
 
-		// caso queira configurar mais, pode-se passar o formato e a versao aqui
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		System.out.print("Teste com REST:\n");
 
 		String output = client.execGet(path + "?number1=1&number2=2");
 
-		Assert.assertTrue(output.equals("3"));
+		Assert.assertEquals("3" ,  output);
 
-		System.out.print("Teste com sucesso:\n");
+	}
+	
+
+	@Test
+	public void execGet() throws WSClientException,
+			InterruptedException {
+
+		WSClient client = RESTClientFactory.getClient("util");
+
+		String path = "test/sum/";
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("number1", 1);
+		parameters.put("number2", 2);
+
+
+		String output = client.execGet(path,parameters);
+
+		Assert.assertEquals("3" ,  output);
 
 	}
 
 	@Test
-	public void execPost() throws WSClientException, InterruptedException {
+	public void execGetWithoutTerminator() throws WSClientException,
+			InterruptedException {
+
+		WSClient client = RESTClientFactory.getClient("util");
+
+		String path = "test/sum";
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("number1", 1);
+		parameters.put("number2", 2);
+
+
+		String output = client.execGet(path,parameters);
+
+		Assert.assertEquals("3" ,  output);
+
+	}
+
+	
+
+	@Test
+	public void execGetMultiIn() throws WSClientException,
+			InterruptedException {
+
+		WSClient client = RESTClientFactory.getClient("util");
+
+		String path = "test/sum/";
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("number2", 2);
+
+
+		String output = client.execGet(path + "?number1=1",parameters);
+
+		Assert.assertEquals("3" ,  output);
+
+	}
+
+	@Test
+	public void execPostWithoutTerminator() throws WSClientException, InterruptedException {
 
 		WSClient client = RESTClientFactory.getClient("util");
 
@@ -112,8 +167,25 @@ public class WSClientTest {
 
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
+ 
 
-		System.out.print("Teste com REST:\n");
+		String output = client.execPost(path, parameters);
+
+		Assert.assertEquals("3", output);
+	}
+	
+	@Test
+	public void execPost() throws WSClientException, InterruptedException {
+
+		WSClient client = RESTClientFactory.getClient("util");
+
+		// caso queira configurar mais, pode-se passar o formato e a versao aqui
+		String path = "test/sum/";
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("number1", 1);
+		parameters.put("number2", 2);
+ 
 
 		String output = client.execPost(path, parameters);
 

@@ -4,23 +4,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 
 public class WSClient {
 
-	private static final String USER_AGENT = "Mozilla/5.0";
-	private HttpClient client = null;
 	private String urlservice = null;
 
 	public WSClient(String urlservice) {
-
-		this.client = HttpClientBuilder.create()
-				.setRedirectStrategy(new LaxRedirectStrategy())
-				.setUserAgent(USER_AGENT).build();
 
 		if (urlservice.endsWith("/")) {
 			this.urlservice = urlservice.replaceAll("/$", "");
@@ -37,6 +28,32 @@ public class WSClient {
 
 	public String execGet(String path) throws WSClientException {
 		return exec(path, null, false);
+	}
+
+	/**
+	 * Convert parameters in query parameters
+	 * */
+	public String execGet(String path, Map<String, Object> parameters)
+			throws WSClientException {
+		String parametersQuery = "?";
+		boolean first = true;
+
+		if (path.contains("?")) {
+			parametersQuery = "";
+			first = false;
+		}
+
+		Set<String> keys = parameters.keySet();
+
+		for (String key : keys) {
+			if (!first) {
+				parametersQuery += "&";
+			}
+			parametersQuery += key + "=" + parameters.get(key).toString();
+			first = false;
+		}
+
+		return exec(path + parametersQuery, null, false);
 	}
 
 	public String exec(String path, Map<String, Object> parameters, boolean post)
