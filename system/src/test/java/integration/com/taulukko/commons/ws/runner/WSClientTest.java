@@ -30,6 +30,8 @@ public class WSClientTest {
 			@Override
 			public void run() {
 				String webappDirLocation = "src/main/resources/webapps";
+				RESTClientFactory.start(new File(".").getAbsolutePath() + "/"
+						+ webappDirLocation + "/WEB-INF/classes", false);
 				tomcat = new Tomcat();
 
 				// The port that we should run on can be set into an environment
@@ -52,6 +54,7 @@ public class WSClientTest {
 
 					tomcat.start();
 					tomcat.getServer().await();
+
 				} catch (ServletException | LifecycleException
 						| InterruptedException e) {
 					e.printStackTrace();
@@ -71,6 +74,7 @@ public class WSClientTest {
 			Thread.sleep(100);
 			state = tomcat.getServer().getStateName();
 		}
+
 	}
 
 	@AfterClass
@@ -90,17 +94,14 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-
 		String output = client.execGet(path + "?number1=1&number2=2");
 
-		Assert.assertEquals("3" ,  output);
+		Assert.assertEquals("3", output);
 
 	}
-	
 
 	@Test
-	public void execGet() throws WSClientException,
-			InterruptedException {
+	public void execGet() throws WSClientException, InterruptedException {
 
 		WSClient client = RESTClientFactory.getClient("util");
 
@@ -110,10 +111,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
+		String output = client.execGet(path, parameters);
 
-		String output = client.execGet(path,parameters);
-
-		Assert.assertEquals("3" ,  output);
+		Assert.assertEquals("3", output);
 
 	}
 
@@ -129,18 +129,14 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
+		String output = client.execGet(path, parameters);
 
-		String output = client.execGet(path,parameters);
-
-		Assert.assertEquals("3" ,  output);
+		Assert.assertEquals("3", output);
 
 	}
 
-	
-
 	@Test
-	public void execGetMultiIn() throws WSClientException,
-			InterruptedException {
+	public void execGetMultiIn() throws WSClientException, InterruptedException {
 
 		WSClient client = RESTClientFactory.getClient("util");
 
@@ -149,15 +145,15 @@ public class WSClientTest {
 
 		parameters.put("number2", 2);
 
+		String output = client.execGet(path + "?number1=1", parameters);
 
-		String output = client.execGet(path + "?number1=1",parameters);
-
-		Assert.assertEquals("3" ,  output);
+		Assert.assertEquals("3", output);
 
 	}
 
 	@Test
-	public void execPostWithoutTerminator() throws WSClientException, InterruptedException {
+	public void execPostWithoutTerminator() throws WSClientException,
+			InterruptedException {
 
 		WSClient client = RESTClientFactory.getClient("util");
 
@@ -167,13 +163,12 @@ public class WSClientTest {
 
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
- 
 
 		String output = client.execPost(path, parameters);
 
 		Assert.assertEquals("3", output);
 	}
-	
+
 	@Test
 	public void execPost() throws WSClientException, InterruptedException {
 
@@ -185,7 +180,6 @@ public class WSClientTest {
 
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
- 
 
 		String output = client.execPost(path, parameters);
 

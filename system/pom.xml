@@ -15,7 +15,7 @@
 	<groupId>com.taulukko.commons</groupId>
 	<artifactId>taulukko-commons-wsclient</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<!-- -SNAPSHOT -->	
   
 	<properties>
@@ -102,7 +102,7 @@
 		<dependency>
 			<groupId>com.taulukko.commons</groupId>
 			<artifactId>taulukko-commons-util</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.5</version>
 		</dependency>
 					
 		<dependency>
@@ -116,6 +116,13 @@
 			<artifactId>httpcore</artifactId>
 			<version>4.4</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.4.1</version>
+		</dependency>
+				
 			    
 		<dependency>
 			<groupId>javax</groupId>

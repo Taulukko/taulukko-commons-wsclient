@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.taulukko.commons.util.config.Reloadable;
-@Deprecated
-public class RESTClientFactory {
+
+public class WSClientFactory {
 
 	private static final String PROPERTIES_FILE = "ws-client.properties";
 	private static Properties properties = null;
@@ -16,12 +16,12 @@ public class RESTClientFactory {
 	private static String path = new File(".").getAbsolutePath();
 
 	public static void start(String path, boolean j2ee) {
-		RESTClientFactory.path = path;
+		WSClientFactory.path = path;
 
 		if (config == null) {
 			Reloadable reloadale = new ReloadableConfig();
 			Config.startDefault(new Config(reloadale, j2ee), "ws-client",
-					RESTClientFactory.path);
+					WSClientFactory.path);
 
 			config = Config.getInstance();
 		}
@@ -66,7 +66,7 @@ public class RESTClientFactory {
 				return;
 			}
 
-			InputStream in = RESTClientFactory.class.getResourceAsStream("/"
+			InputStream in = WSClientFactory.class.getResourceAsStream("/"
 					+ PROPERTIES_FILE);
 			if (in == null) {
 				String realPath = Thread.currentThread()
