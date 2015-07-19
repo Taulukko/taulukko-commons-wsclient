@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.taulukko.commons.util.config.Reloadable;
 @Deprecated
 public class RESTClientFactory {
 
@@ -15,15 +14,14 @@ public class RESTClientFactory {
 	private static Config config = null;
 	private static String path = new File(".").getAbsolutePath();
 
-	public static void start(String path, boolean j2ee) {
+	public static void start(String path, boolean j2ee) throws Exception {
 		RESTClientFactory.path = path;
 
 		if (config == null) {
-			Reloadable reloadale = new ReloadableConfig();
-			Config.startDefault(new Config(reloadale, j2ee), "ws-client",
-					RESTClientFactory.path);
+			Config.startDefault(Config.class, new WSConfigBuilder(j2ee),
+					"ws-client", RESTClientFactory.path);
 
-			config = Config.getInstance();
+			config = Config.getInstance(Config.class);
 		}
 	}
 

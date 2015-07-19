@@ -10,7 +10,7 @@ public class Config extends ConfigBase {
 	private Properties properties = null;
 	
 	public Config(Reloadable reloadable, boolean j2ee) {
-		super(reloadable, j2ee);
+		super(reloadable, j2ee,Config.class);
 	}
 
 	public Properties getProperties() {

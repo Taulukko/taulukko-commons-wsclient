@@ -13,9 +13,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.taulukko.ws.client.RESTClientFactory;
 import com.taulukko.ws.client.WSClient;
 import com.taulukko.ws.client.WSClientException;
+import com.taulukko.ws.client.WSClientFactory;
 
 public class WSClientTest {
 
@@ -30,8 +30,13 @@ public class WSClientTest {
 			@Override
 			public void run() {
 				String webappDirLocation = "src/main/resources/webapps";
-				RESTClientFactory.start(new File(".").getAbsolutePath() + "/"
-						+ webappDirLocation + "/WEB-INF/classes", false);
+				try {
+					WSClientFactory.start(new File(".").getAbsolutePath() + "/"
+							+ webappDirLocation + "/WEB-INF/classes", false);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				tomcat = new Tomcat();
 
 				// The port that we should run on can be set into an environment
@@ -86,7 +91,7 @@ public class WSClientTest {
 	public void execGetDirectQuery() throws WSClientException,
 			InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -103,7 +108,7 @@ public class WSClientTest {
 	@Test
 	public void execGet() throws WSClientException, InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -121,7 +126,7 @@ public class WSClientTest {
 	public void execGetWithoutTerminator() throws WSClientException,
 			InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		String path = "test/sum";
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -138,7 +143,7 @@ public class WSClientTest {
 	@Test
 	public void execGetMultiIn() throws WSClientException, InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -155,7 +160,7 @@ public class WSClientTest {
 	public void execPostWithoutTerminator() throws WSClientException,
 			InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		// caso queira configurar mais, pode-se passar o formato e a versao aqui
 		String path = "test/sum";
@@ -172,10 +177,28 @@ public class WSClientTest {
 	@Test
 	public void execPost() throws WSClientException, InterruptedException {
 
-		WSClient client = RESTClientFactory.getClient("util");
+		WSClient client = WSClientFactory.getClient("util");
 
 		// caso queira configurar mais, pode-se passar o formato e a versao aqui
 		String path = "test/sum/";
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("number1", 1);
+		parameters.put("number2", 2);
+
+		String output = client.execPost(path, parameters);
+
+		Assert.assertEquals("3", output);
+	}
+	
+
+	@Test(expected=WSClientException.class)
+	public void execPostUnknownURL() throws WSClientException, InterruptedException {
+
+		WSClient client = WSClientFactory.getClient("util");
+
+		// caso queira configurar mais, pode-se passar o formato e a versao aqui
+		String path = "test/sum2/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("number1", 1);

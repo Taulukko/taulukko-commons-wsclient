@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.taulukko.commons.util.config.Reloadable;
-
 public class WSClientFactory {
 
 	private static final String PROPERTIES_FILE = "ws-client.properties";
@@ -15,15 +13,15 @@ public class WSClientFactory {
 	private static Config config = null;
 	private static String path = new File(".").getAbsolutePath();
 
-	public static void start(String path, boolean j2ee) {
+	public static void start(String path, final boolean j2ee) throws Exception {
 		WSClientFactory.path = path;
 
 		if (config == null) {
-			Reloadable reloadale = new ReloadableConfig();
-			Config.startDefault(new Config(reloadale, j2ee), "ws-client",
-					WSClientFactory.path);
 
-			config = Config.getInstance();
+			Config.startDefault(Config.class, new WSConfigBuilder(j2ee),
+					"ws-client", WSClientFactory.path);
+
+			config = Config.getInstance(Config.class);
 		}
 	}
 
