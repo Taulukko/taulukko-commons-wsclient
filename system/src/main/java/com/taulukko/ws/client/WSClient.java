@@ -86,36 +86,7 @@ public class WSClient {
 
 		try {
 
-			/*
-			 * 
-			 * Form form = Form.form(); Set<String> keys = parameters.keySet();
-			 * for (String key : keys) { form = form.add(key,
-			 * parameters.get(key).toString()); }
-			 * 
-			 * System.out.println("POST:" + url);
-			 * 
-			 * Response response = Request.Post(url).connectTimeout(1000)
-			 * .socketTimeout(1000).bodyForm(form.build()).execute();
-			 * 
-			 * return response.returnContent().asString();
-			 */
-			/*
-			 * google
-			 * 
-			 * 
-			 * UrlFetchTransport HTTP_TRANSPORT = new UrlFetchTransport();
-			 * HttpRequestFactory requestFactory = HTTP_TRANSPORT
-			 * .createRequestFactory(); GenericUrl genericURL = new
-			 * GenericUrl(url); HttpRequest request = requestFactory
-			 * .buildGetRequest(genericURL); String index =
-			 * request.execute().parseAsString(); return index;
-			 */
-
 			URL newurl = new URL(url);
-			/*
-			 * HttpsURLConnection conn = (HttpsURLConnection) newurl
-			 * .openConnection();
-			 */
 
 			HttpURLConnection conn = (HttpURLConnection) newurl
 					.openConnection();
@@ -123,9 +94,17 @@ public class WSClient {
 			conn.setReadTimeout(10000);
 			conn.setConnectTimeout(15000);
 			if (post) {
+				// change default method GET to POST
 				conn.setRequestMethod("POST");
 			} else {
-				conn.setRequestMethod("GET");
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						(conn.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				return sb.toString();
 			}
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
@@ -150,9 +129,6 @@ public class WSClient {
 			os.close();
 
 			conn.connect();
-			// TODO: para devolver o codigo de erro http precisaria capturar
-			// o error stream
-			// conn.getErrorStream()
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					(conn.getInputStream())));
@@ -163,13 +139,6 @@ public class WSClient {
 			}
 			return sb.toString();
 
-			/*
-			 * } else { System.out.println("GET:" + url); Response response =
-			 * Request.Get(url).execute(); return
-			 * response.returnContent().asString();
-			 * 
-			 * }
-			 */
 		} catch (IOException e) {
 			throw new WSClientException(e.getMessage(), e);
 		}
