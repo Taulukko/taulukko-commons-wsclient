@@ -16,7 +16,7 @@
 	<groupId>com.taulukko.commons</groupId>
 	<artifactId>taulukko-commons-wsclient</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.7-0-1-SNAPSHOT</version>
+	<version>1.0.7-2-0-SNAPSHOT</version>
 	<!-- -SNAPSHOT -->
 
 	<properties>
@@ -104,7 +104,7 @@
 		<dependency>
 		    <groupId>com.taulukko.commons</groupId>
 		    <artifactId>taulukko-commons-util</artifactId>
-		    <version>1.1.9</version>
+		    <version>1.1.10-0-0</version>
 		</dependency>
 
 
