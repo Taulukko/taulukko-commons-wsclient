@@ -7,20 +7,20 @@ import com.taulukko.commons.util.config.Reloadable;
  
 public class ReloadableConfig implements Reloadable {
 
-	private Config config;
+	private WSConfig config;
 
-	public Config getConfig() {
+	public WSConfig getConfig() {
 		return config;
 	}
 
-	public void setConfig(Config config) {
+	public void setConfig(WSConfig config) {
 		this.config = config;
 	}
 
 	@Override
 	public void reload(ConfigBase configbase, Properties properties) {
 		
-		Config config = (Config) configbase;
+		WSConfig config = (WSConfig) configbase;
 		config.setProperties(properties);
 	}
 

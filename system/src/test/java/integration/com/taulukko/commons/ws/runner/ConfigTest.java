@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.taulukko.commons.util.io.EFile;
-import com.taulukko.ws.client.Config;
+import com.taulukko.ws.client.WSConfig;
 import com.taulukko.ws.client.WSClient;
 import com.taulukko.ws.client.WSClientException;
 import com.taulukko.ws.client.WSClientFactory;
@@ -15,7 +15,7 @@ public class ConfigTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		WSClientFactory.start(EFile.getClassLoaderPath(), false);
+		WSClientFactory.start(EFile.getClassLoaderPath());
 
 	}
 
@@ -30,8 +30,8 @@ public class ConfigTest {
 		WSClient client = WSClientFactory.getClient("util");
 
 		Assert.assertNotNull(client);
-		Assert.assertEquals("http://localhost:8181", Config
-				.<Config> getInstance(Config.class).getURL("util"));
+		Assert.assertEquals("http://localhost:8181", WSConfig
+				.<WSConfig> getInstance(WSConfig.class).getURL("util"));
 
 	}
 

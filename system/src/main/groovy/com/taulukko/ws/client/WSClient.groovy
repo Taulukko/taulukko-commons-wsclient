@@ -1,22 +1,7 @@
 package com.taulukko.ws.client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair
+import org.apache.http.message.BasicNameValuePair
 
 public class WSClient {
 
@@ -25,15 +10,18 @@ public class WSClient {
 	public WSClient(String urlservice) {
 
 		if (urlservice.endsWith("/")) {
-			this.urlservice = urlservice.replaceAll("/$", "");
+			this.urlservice = urlservice.replaceAll("/\$", "");
 		} else {
 			this.urlservice = urlservice;
 		}
-
 	}
 
-	public String execPost(String path, Map<String, Object> parameters)
-			throws WSClientException {
+	public WSConfig getConfig() {
+		return WSConfig.<WSConfig>getInstance(WSConfig.class);
+	}
+
+	public  String execPost(String path, Map<String, Object> parameters)
+	throws WSClientException {
 		return exec(path, parameters, true);
 	}
 
@@ -45,13 +33,18 @@ public class WSClient {
 	 * Convert parameters in query parameters
 	 * */
 	public String execGet(String path, Map<String, Object> parameters)
-			throws WSClientException {
+	throws WSClientException {
 		String parametersQuery = "?";
 		boolean first = true;
 
 		if (path.contains("?")) {
 			parametersQuery = "";
 			first = false;
+		}
+		else {
+			if( this.getConfig().endsWithSeparator() && !path.endsWith("/") && !path.endsWith("\\") ) {
+				path+="/";
+			}
 		}
 
 		Set<String> keys = parameters.keySet();
@@ -68,7 +61,7 @@ public class WSClient {
 	}
 
 	public String exec(String path, Map<String, Object> parameters, boolean post)
-			throws WSClientException {
+	throws WSClientException {
 
 		String url = urlservice;
 
@@ -76,9 +69,11 @@ public class WSClient {
 			path = path.substring(1);
 		}
 
-		url = urlservice + "/" + path;
+		if(path!="") {
+			url = urlservice + "/" + path;
+		}
 
-		boolean needTerminator = !url.endsWith("/") && !url.contains("?");
+		boolean needTerminator = !url.endsWith("/") && !url.contains("?") && this.getConfig().endsWithSeparator()  ;
 		// separator is required against redirect error
 		if (needTerminator) {
 			url += "/";
@@ -145,7 +140,7 @@ public class WSClient {
 	}
 
 	private String getQuery(List<NameValuePair> params)
-			throws UnsupportedEncodingException {
+	throws UnsupportedEncodingException {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 

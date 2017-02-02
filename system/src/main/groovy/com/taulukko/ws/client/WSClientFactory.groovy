@@ -1,41 +1,39 @@
 package com.taulukko.ws.client;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
-@Deprecated
-public class RESTClientFactory {
+public class WSClientFactory {
 
 	private static final String PROPERTIES_FILE = "ws-client.properties";
 	private static Properties properties = null;
-	private static Config config = null;
+	private static WSConfig config = null;
 	private static String path = new File(".").getAbsolutePath();
 
-	public static void start(String path, boolean j2ee) throws Exception {
-		RESTClientFactory.path = path;
+	public static void start(String path) throws Exception {
+		WSClientFactory.path = path;
 
 		if (config == null) {
-			Config.startDefault(Config.class, new WSConfigBuilder(j2ee),
-					"ws-client", RESTClientFactory.path);
 
-			config = Config.getInstance(Config.class);
+			WSConfigBuilder configBuilder =  new WSConfigBuilder(
+					) ;
+
+			WSConfig.startDefault(WSConfig.class,configBuilder,
+					"ws-client", WSClientFactory.path);
+
+			config =  WSConfig
+					.<WSConfig> getInstance(WSConfig.class);
 		}
 	}
 
 	public static WSClient getClient(String server) {
 
-		// loadProperties();
+		loadProperties();
 		server = server.trim();
 
 		String url = config.getURL(server);
 		String contextName = config.getContextName(server);
 
 		if (url == null) {
-			System.err.println(server
-					+ " not found. Check your ws-client.properties");
+			System.err.println  "$server not found. Check your ws-client.properties";
 			return null;
 		}
 
@@ -49,7 +47,7 @@ public class RESTClientFactory {
 		String contextPart = "";
 
 		if (!contextName.equals("ROOT")) {
-			contextPart = "/" + contextName;
+			contextPart = "/$contextName" ;
 		}
 
 		WSClient client = new WSClient(url + contextPart);
@@ -64,9 +62,9 @@ public class RESTClientFactory {
 				return;
 			}
 
-			InputStream in = RESTClientFactory.class.getResourceAsStream("/"
-					+ PROPERTIES_FILE);
-			if (in == null) {
+			InputStream inputStream = WSClientFactory.class.getResourceAsStream "/$PROPERTIES_FILE";
+
+			if (inputStream == null) {
 				String realPath = Thread.currentThread()
 						.getContextClassLoader().getResource("./").toString()
 						.replace("file:/", "");
@@ -80,14 +78,13 @@ public class RESTClientFactory {
 					realPath = "/" + realPath;
 				}
 
-				in = new FileInputStream(realPath + PROPERTIES_FILE);
+				inputStream = new FileInputStream(realPath + PROPERTIES_FILE);
 			}
 			properties = new Properties();
-			properties.load(in);
-			in.close();
-
+			properties.load(inputStream);
+			inputStream.close();
 		} catch (IOException e) {
-			System.err.println(PROPERTIES_FILE + " not found");
+			System.err.println(  "$PROPERTIES_FILE not found");
 			e.printStackTrace();
 		}
 	}

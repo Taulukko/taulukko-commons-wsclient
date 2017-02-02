@@ -32,7 +32,7 @@ public class WSClientTest {
 				String webappDirLocation = "src/main/resources/webapps";
 				try {
 					WSClientFactory.start(new File(".").getAbsolutePath() + "/"
-							+ webappDirLocation + "/WEB-INF/classes", false);
+							+ webappDirLocation + "/WEB-INF/classes");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -94,10 +94,6 @@ public class WSClientTest {
 		WSClient client = WSClientFactory.getClient("util");
 
 		String path = "test/sum/";
-		Map<String, Object> parameters = new HashMap<String, Object>();
-
-		parameters.put("number1", 1);
-		parameters.put("number2", 2);
 
 		String output = client.execGet(path + "?number1=1&number2=2");
 
@@ -190,10 +186,10 @@ public class WSClientTest {
 
 		Assert.assertEquals("3", output);
 	}
-	
 
-	@Test(expected=WSClientException.class)
-	public void execPostUnknownURL() throws WSClientException, InterruptedException {
+	@Test(expected = WSClientException.class)
+	public void execPostUnknownURL() throws WSClientException,
+			InterruptedException {
 
 		WSClient client = WSClientFactory.getClient("util");
 
