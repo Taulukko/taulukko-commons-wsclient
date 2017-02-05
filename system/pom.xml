@@ -16,13 +16,13 @@
 	<groupId>com.taulukko.commons</groupId>
 	<artifactId>taulukko-commons-wsclient</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.7-2-0-SNAPSHOT</version>
+	<version>1.0.7-2-1</version>
 	<!-- -SNAPSHOT -->
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>4.11</junit.version>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<servlet.version>2.5</servlet.version>
 		<tomcat.version>8.0.20</tomcat.version>
 	</properties>
@@ -38,6 +38,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.0</version>
+		</dependency>
 
 
 		<!-- for integration test propouses -->
@@ -64,11 +70,13 @@
 			<artifactId>tomcat-jasper</artifactId>
 			<version>${tomcat.version}</version>
 			<scope>test</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jasper-el</artifactId>
 			<version>${tomcat.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -97,28 +105,52 @@
 			<version>3.0.1</version>
 			<scope>test</scope>
 		</dependency>
-
-
-		<!--compilation -->
- 
-
-		<dependency>
-			<groupId>com.taulukko.commons</groupId>
-			<artifactId>taulukko-commons-util</artifactId>
-			<version>1.1.12-0-0-SNAPSHOT</version>
-		</dependency>
-
-
-
-
-		<!-- if not provided (non j2ee apps), must be included  -->
+		<!-- if not provided (non j2ee apps), must be included -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 			<version>6.0</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
- 
+
+		<!-- https://mvnrepository.com/artifact/org.codehaus.groovy.modules.http-builder/http-builder -->
+		<dependency>
+			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
+			<artifactId>http-builder</artifactId>
+			<version>0.7.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+
+
+
+		<dependency>
+			<groupId>com.taulukko.commons</groupId>
+			<artifactId>taulukko-commons-util</artifactId>
+			<version>1.1.12-0-1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.taulukko.commons</groupId>
+			<artifactId>taulukko-commons-parsers</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+
+
+
+
 	</dependencies>
 
 	<build>

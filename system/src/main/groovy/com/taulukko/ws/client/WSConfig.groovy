@@ -1,5 +1,7 @@
 package com.taulukko.ws.client;
 
+import org.apache.commons.lang3.StringUtils
+
 import com.taulukko.commons.util.config.ConfigBase
 import com.taulukko.commons.util.config.Reloadable
 
@@ -28,6 +30,6 @@ public class WSConfig extends ConfigBase {
 	}
 
 	boolean endsWithSeparator() {
-		return properties.getProperty("endsWithSeparator").toBoolean();
+		return StringUtils.defaultIfEmpty(properties.getProperty("endsWithSeparator"),"false").toBoolean();
 	}
 }
