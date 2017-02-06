@@ -28,7 +28,7 @@ public class WSClient extends WSBase {
 	}
 
 	public String execGet(String path) throws WSClientException {
-		return exec(path, null, false);
+		return execGet(path, [:]);
 	}
 
 	/**
@@ -36,32 +36,39 @@ public class WSClient extends WSBase {
 	 * */
 	public String execGet(String path, Map<String, Object> parameters)
 	throws WSClientException {
-		String parametersQuery = "?";
-		boolean first = true;
 
-		if (path.contains("?")) {
-			parametersQuery = "";
-			first = false;
-		}
-		else {
-			def cfg = this.config;
-			
-			if( cfg.properties.endsWithSeparator && !path.endsWith("/") && !path.endsWith("\\") ) {
-				path+="/";
+		if(path.contains ("?") ){
+			def pathPart = StringUtils.split( path,'?');
+			def parametersQuery = StringUtils.split(pathPart[1], "&")
+			for(def parameter : parametersQuery) {
+				def parameterPart = parameter.split("=")
+				parameters.put(parameterPart[0],parameterPart[1])
 			}
+			path = pathPart[0]
 		}
 
-		Set<String> keys = parameters.keySet();
-
-		for (String key : keys) {
-			if (!first) {
-				parametersQuery += "&";
-			}
-			parametersQuery += key + "=" + parameters.get(key).toString();
-			first = false;
-		}
-
-		return exec(path + parametersQuery, null, false);
+		return exec(path, parameters, false);
+		/*String parametersQuery = "?";
+		 boolean first = true;
+		 if (path.contains("?")) {
+		 parametersQuery = "";
+		 first = false;
+		 }
+		 else {
+		 def cfg = this.config;
+		 if( cfg.properties.endsWithSeparator && !path.endsWith("/") && !path.endsWith("\\") ) {
+		 path+="/";
+		 }
+		 }
+		 Set<String> keys = parameters.keySet();
+		 for (String key : keys) {
+		 if (!first) {
+		 parametersQuery += "&";
+		 }
+		 parametersQuery += key + "=" + parameters.get(key).toString();
+		 first = false;
+		 }
+		 return exec(path + parametersQuery, null, false);*/
 	}
 
 	public String exec(String path, Map<String, Object> parameters, boolean post)
@@ -73,14 +80,9 @@ public class WSClient extends WSBase {
 			path = path.substring(1);
 		}
 
-		
-		println " config properties:${this.config.properties}"
-		println "endsWithSeparator:${this.config.properties.endsWithSeparator}"
-			
 		boolean needTerminator = !path.endsWith("/") && !path.contains("?") && this.config.properties.endsWithSeparator ;
-		
-		println "needTerminator:${needTerminator}"
-		
+
+
 		// separator is required against redirect error
 		if (needTerminator) {
 			path += "/";
@@ -90,75 +92,45 @@ public class WSClient extends WSBase {
 			url = urlservice + "/" + path;
 		}
 
-		
-		try {
 
+		try {
 			URL newurl = new URL(url);
 
 
-			println  "urlToUri=${newurl}";
-			println  "path=${path}";
-			println  "urlservice=${urlservice}";
-			println  "post=${post}";
+			URI uri = new URI(newurl.getProtocol(), null,newurl.getHost(), newurl.getPort(), newurl.getPath(), null , null);
+
+			//@TODO: Criar no parsers um que converte de mapa pra json
+			Gson  gson = new GsonBuilder().create();
+			def json = gson.toJson(parameters);
+
+
+			RESTClient restClient = new RESTClient(uri);
+
+			def response;
 
 			if (post) {
- 
-				//System.out.println("hgora de testar");
-				//Thread.sleep(10000);
-
-				//TODO trocar a biblioteca pra post e get
-
-				//"number1=1&number2=2"
-				URI uri = new URI(newurl.getProtocol(), null,newurl.getHost(), newurl.getPort(), newurl.getPath(), null , null);
-
-				RESTClient restClient = new RESTClient(uri);
-
-				//TODO: Criar no parsers um que converte de mapa pra json
-				Gson  gson = new GsonBuilder().create();
-				def json = gson.toJson(parameters);
-
-
-				println  "parameters:${json}"
-				println uri.toString()
-
-				def response = restClient.post(null, contentType:  groovyx.net.http.ContentType.JSON,
+				response = restClient.post(null, contentType:  groovyx.net.http.ContentType.JSON,
 				requestContentType: groovyx.net.http.ContentType.URLENC,
 				body:parameters);
 
-
-				println  "response=${response}"
-
-				if( response.status != 200)
-				{
-					throw new Exception(response.data , respose.status);
-				}
-
-				println  "status=${response.status}"
-				println  "data=${response.data}"
-
-
-				return response.data;
-
 			}
-			HttpURLConnection conn = (HttpURLConnection) newurl
-					.openConnection();
+			else
+			{
 
-			conn.setReadTimeout(10000);
-			conn.setConnectTimeout(15000);
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					(conn.getInputStream())));
-			StringBuilder sb = new StringBuilder();
-			String output;
-			while ((output = br.readLine()) != null) {
-				sb.append(output);
+				response = restClient.get(["query":parameters]);
 			}
-			return sb.toString();
 
+			if( response.status != 200)
+			{
+				throw new Exception(response.data , respose.status);
+			}
+
+
+			return response.data.toString();
 
 		} catch (Throwable e) {
-			//debug
-			def message = "Error in WSClient [${path}] , try change property terminator url ";
+
+			def message =(this.config.properties.endsWithSeparator)?"Error in WSClient [${path}] ":"Error in WSClient [${path}] , try change property terminator url ";
 			message += StringUtils.defaultIfEmpty(e.getMessage(),"Error in WSClient.post") + " : ";
 			def cause = e.getCause()
 			message += (cause)?cause.getMessage():"No previous reason";

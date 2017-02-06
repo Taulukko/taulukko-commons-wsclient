@@ -43,8 +43,7 @@ public class WSClientTest extends WSBaseTest{
 						try {
 							WSClientFactory.start(new File(".").getAbsolutePath() + "/"
 									+ webappDirLocation + "/WEB-INF/classes");
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
+						} catch (Exception e1) { 
 							e1.printStackTrace();
 						}
 						tomcat = new Tomcat();
@@ -154,6 +153,7 @@ public class WSClientTest extends WSBaseTest{
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
+		
 		parameters.put("number2", 2);
 
 		String output = client.execGet(path + "?number1=1", parameters);
@@ -245,7 +245,7 @@ public class WSClientTest extends WSBaseTest{
 
 		String out = wsclient.execGet("");
 
-		assert out.contains  ('"Host": "httpbin.org"');
+		assert out.contains  ('Host=httpbin.org');
 	}
  
 
