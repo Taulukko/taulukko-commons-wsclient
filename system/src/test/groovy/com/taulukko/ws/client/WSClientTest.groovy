@@ -19,11 +19,11 @@ import com.google.gson.GsonBuilder
 
 
 import static org.junit.Assert.*
-   
+
 import com.taulukko.commons.util.io.EFile
 
 
-import groovyx.net.http.RESTClient 
+import groovyx.net.http.RESTClient
 import groovy.json.*
 
 @RunWith(JUnit4.class)
@@ -43,7 +43,7 @@ public class WSClientTest extends WSBaseTest{
 						try {
 							WSClientFactory.start(new File(".").getAbsolutePath() + "/"
 									+ webappDirLocation + "/WEB-INF/classes");
-						} catch (Exception e1) { 
+						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
 						tomcat = new Tomcat();
@@ -124,7 +124,7 @@ public class WSClientTest extends WSBaseTest{
 		String output = client.execGet(path, parameters);
 
 		assert "3" ==   output;
-		 
+
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class WSClientTest extends WSBaseTest{
 		assert "3" == output
 
 	}
-	 
+
 	@Test
 	public void execGetMultiIn() throws WSClientException, InterruptedException {
 
@@ -153,7 +153,7 @@ public class WSClientTest extends WSBaseTest{
 		String path = "test/sum/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		
+
 		parameters.put("number2", 2);
 
 		String output = client.execGet(path + "?number1=1", parameters);
@@ -161,69 +161,70 @@ public class WSClientTest extends WSBaseTest{
 		assert "3" ==  output;
 
 	}
- 
 
-	 
-	@Test(expected=Throwable)
+
+
+	@Test
 	public void execPostWithoutTerminatorError() throws WSClientException,
 	InterruptedException {
- 
+
 		WSClient client = WSClientFactory.getClient("util");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("number1", "1");
 		parameters.put("number2", "2");
- 
+
 		String path = "test/sumPost";
 
 		def response = client.execPost(path,parameters);
 
-		assert response == "3"; 
+		assert response == "3";
 
 	}
- 
-	
+
+
 	@Test
 	public void execPostWithTerminator() throws WSClientException,
 	InterruptedException {
- 
+
 		WSClient client = WSClientFactory.getClient("util");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("number1", "1");
 		parameters.put("number2", "2");
- 
+
 		String path = "test/sumPost/";
 
 		def response = client.execPost(path,parameters);
 
 		assert response == "3";
- 
+
 
 	}
-	 
+
 	@Test
 	public void execPostWithoutTerminatorSuccess() throws WSClientException,
 	InterruptedException {
 
-		
-		try{
 
-			config.properties.endsWithSeparator=true;
- 			WSClient client = WSClientFactory.getClient("util");		 
-	
+		try{
+ 
+				
+			config.getExtended().endsWithSeparator=true;
+			WSClient client = WSClientFactory.getClient("util");
+
 			Map<String, Object> parameters = new HashMap<String, Object>();
-	
+
 			parameters.put("number1", "1");
 			parameters.put("number2", "2");
-	 
+
 			String path = "test/sumPost";
-	
-			def response = client.execPost(path,parameters);	
+
+			def response = client.execPost(path,parameters);
 			assert response == "3";
-	
+
 		}
 		catch(any)
 		{
@@ -231,12 +232,12 @@ public class WSClientTest extends WSBaseTest{
 		}
 		finally
 		{
-			config.properties.endsWithSeparator=false;
+			config.getExtended().endsWithSeparator=false;
 
 		}
 
 	}
- 
+
 
 
 	@Test
@@ -247,14 +248,14 @@ public class WSClientTest extends WSBaseTest{
 
 		assert out.contains  ('Host=httpbin.org');
 	}
- 
+
 
 	@Test(expected = WSClientException.class)
 	public void execPostUnknownURL() throws WSClientException,
 	InterruptedException {
 
 		WSClient client = WSClientFactory.getClient("util");
- 
+
 		String path = "test/sum2/";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 

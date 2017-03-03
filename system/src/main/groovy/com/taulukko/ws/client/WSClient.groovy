@@ -1,13 +1,13 @@
 package com.taulukko.ws.client;
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.http.Header
 import org.apache.http.NameValuePair
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.taulukko.ws.client.traits.WSBase
 
 import groovyx.net.http.RESTClient
+import groovyx.net.http.ResponseParseException
 
 public class WSClient extends WSBase {
 
@@ -47,95 +47,100 @@ public class WSClient extends WSBase {
 			path = pathPart[0]
 		}
 
+		 
+		
 		return exec(path, parameters, false);
-		/*String parametersQuery = "?";
-		 boolean first = true;
-		 if (path.contains("?")) {
-		 parametersQuery = "";
-		 first = false;
-		 }
-		 else {
-		 def cfg = this.config;
-		 if( cfg.properties.endsWithSeparator && !path.endsWith("/") && !path.endsWith("\\") ) {
-		 path+="/";
-		 }
-		 }
-		 Set<String> keys = parameters.keySet();
-		 for (String key : keys) {
-		 if (!first) {
-		 parametersQuery += "&";
-		 }
-		 parametersQuery += key + "=" + parameters.get(key).toString();
-		 first = false;
-		 }
-		 return exec(path + parametersQuery, null, false);*/
+		
 	}
 
 	public String exec(String path, Map<String, Object> parameters, boolean post)
 	throws WSClientException {
 
-		String url = urlservice;
-
-		if (path.startsWith("/")) {
-			path = path.substring(1);
-		}
-
-		boolean needTerminator = !path.endsWith("/") && !path.contains("?") && this.config.properties.endsWithSeparator ;
-
-
-		// separator is required against redirect error
-		if (needTerminator) {
-			path += "/";
-		}
-
-		if(path!="") {
-			url = urlservice + "/" + path;
-		}
-
-
 		try {
-			URL newurl = new URL(url);
+			return exec(path,parameters,post,false);
+		}
+		catch (Throwable e) {
 
+			if(e instanceof ResponseParseException) {
+				ResponseParseException rpe = e;
 
-			URI uri = new URI(newurl.getProtocol(), null,newurl.getHost(), newurl.getPort(), newurl.getPath(), null , null);
-
-			//@TODO: Criar no parsers um que converte de mapa pra json
-			Gson  gson = new GsonBuilder().create();
-			def json = gson.toJson(parameters);
-
-
-			RESTClient restClient = new RESTClient(uri);
-
-			def response;
-
-			if (post) {
-				response = restClient.post(null, contentType:  groovyx.net.http.ContentType.JSON,
-				requestContentType: groovyx.net.http.ContentType.URLENC,
-				body:parameters);
-
-			}
-			else
-			{
-
-				response = restClient.get(["query":parameters]);
+				if(rpe.statusCode==302) {
+					Header [] headers = rpe.getResponse().allHeaders;
+					if(headers.length >1) {
+						def newLocation = headers[1];
+						if(newLocation.name.toLowerCase().equals("location")) {
+							return exec(newLocation.value,parameters,post,true);
+						}
+					}
+				}
 			}
 
-			if( response.status != 200)
-			{
-				throw new Exception(response.data , respose.status);
-			}
+			def message =(this.config.getExtended().endsWithSeparator)?"Error in WSClient [${path}] ":"Error in WSClient [${path}]   ";
 
-
-			return response.data.toString();
-
-		} catch (Throwable e) {
-
-			def message =(this.config.properties.endsWithSeparator)?"Error in WSClient [${path}] ":"Error in WSClient [${path}] , try change property terminator url ";
 			message += StringUtils.defaultIfEmpty(e.getMessage(),"Error in WSClient.post") + " : ";
 			def cause = e.getCause()
 			message += (cause)?cause.getMessage():"No previous reason";
 			throw new WSClientException(message, e);
 		}
+	}
+
+
+	public String exec(String path, Map<String, Object> parameters, boolean post,boolean forceURL)
+	throws Throwable{
+
+
+		String url = (forceURL)?path: urlservice;
+
+
+		if(!forceURL) {
+
+			if (path.startsWith("/")) {
+				path = path.substring(1);
+			}
+
+			boolean needTerminator = !path.endsWith("/") && !path.contains("?") && this.config.getExtended().endsWithSeparator ;
+
+
+			// separator is required against redirect error
+			if (needTerminator) {
+				path += "/";
+			}
+
+			if(path!="") {
+				url = urlservice + "/" + path;
+			}
+		}
+		
+		URL newurl = new URL(url);
+
+
+		URI uri = new URI(newurl.getProtocol(), null,newurl.getHost(), newurl.getPort(), newurl.getPath(), null , null);
+
+		RESTClient restClient = new RESTClient(uri);
+
+		def response;
+
+		if (post) {
+			response = restClient.post(null, contentType:  groovyx.net.http.ContentType.JSON,
+			requestContentType: groovyx.net.http.ContentType.URLENC,
+			body:parameters);
+
+		}
+		else
+		{
+
+			response = restClient.get(["query":parameters]);
+		}
+
+		if( response.status != 200)
+		{
+			throw new Exception(response.data , respose.status);
+		}
+
+
+		return response.data.toString();
+
+
 	}
 
 	private String getQuery(List<NameValuePair> params)

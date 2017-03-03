@@ -16,13 +16,7 @@ import groovyx.net.http.RESTClient
 @RunWith(JUnit4.class)
 class WSClientExternalTest extends GroovyTestCase{
 
-	//
-	/**
-	3-) fazer no parsers um cara pra converter de mapa pra nao usar o gson
-	4-) gerar a nova versao do parsers
-	5-) gerar a nova versao do ws usando o novo parsers
-*/
-	
+ 	
 	@Test
 	public void execGet() throws WSClientException,
 	InterruptedException {
