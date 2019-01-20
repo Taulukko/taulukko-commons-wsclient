@@ -17,11 +17,11 @@
 	<groupId>com.taulukko.commons</groupId>
 	<artifactId>taulukko-commons-wsclient</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.12</version>
+	<version>1.1.0</version>
 	<!-- -SNAPSHOT -->
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<encoding>UTF-8</encoding>
 		<junit.version>4.11</junit.version>
 		<jdk.version>1.8</jdk.version>
 		<servlet.version>2.5</servlet.version>
@@ -83,22 +83,7 @@
 			<artifactId>taulukko-commons-util</artifactId>
 			<version>1.11.0</version>
 		</dependency>
-
-
-
-		<!-- https://mvnrepository.com/artifact/org.codehaus.groovy.modules.http-builder/http-builder -->
-		<dependency>
-			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
-			<artifactId>http-builder</artifactId>
-			<version>0.7.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
+ 
 
 		<!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
 		<dependency>
@@ -129,38 +114,18 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-
-			<!-- To total integration with eclipse and groovy, add groovy support 
-				from distribuition https://github.com/groovy/groovy-eclipse/wiki -->
-			<!-- to photon http://dist.springsource.org/release/GRECLIPSE/e4.8 -->
-			<!-- To neon http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/ -->
-			<!-- To luna http://dist.springsource.org/release/GRECLIPSE/e4.4/ -->
+	<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version><!-- 3.1 is the minimum -->
+				<version>3.0</version>
 				<configuration>
-					<compilerId>groovy-eclipse-compiler</compilerId>
-					<compilerArguments>
-						<indy /><!-- optional; supported by batch 2.4.12-04+ -->
-						<configScript>config.groovy</configScript><!-- optional; supported 
-							by batch 2.4.13-02+ -->
-					</compilerArguments>
+					<argLine>-Dfile.encoding=${encoding}</argLine>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-eclipse-compiler</artifactId>
-						<version>3.0.0-01</version>
-					</dependency>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-eclipse-batch</artifactId>
-						<version>2.5.2-01</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -171,16 +136,27 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
 				<configuration>
+					<argLine>-Dfile.encoding=${encoding}</argLine>
 					<excludes>
-						<exclude>write/**/*Test.java</exclude>
+						<exclude>integration/**/*Test.java</exclude>
 					</excludes>
 					<includes>
-						<include>integration/**/*Test.java</include>
 						<include>**/taulukko/**/*Test.java</include>
 					</includes>
+
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>${encoding}</encoding>
+				</configuration>
+			</plugin>
+
+ 
 		</plugins>
+
 
 	</build>
 

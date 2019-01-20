@@ -1,11 +1,17 @@
 package com.taulukko.ws.client;
+
 import com.taulukko.commons.TaulukkoException;
 
-public class WSClientException extends TaulukkoException { 
+public class WSClientException extends TaulukkoException {
 
 	public static final Integer CLIENT_ERROR = -1;
-	
+
 	private Integer code = 0;
+
+	public WSClientException(Throwable e) {
+		super(e);
+		this.code = -1;
+	}
 
 	public WSClientException(String message) {
 		super(message);
