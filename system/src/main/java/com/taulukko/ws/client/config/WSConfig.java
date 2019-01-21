@@ -6,6 +6,10 @@ import java.util.Map;
 import com.taulukko.commons.util.config.Reloadable;
 
 public class WSConfig {
+	
+
+
+	private String version = "2.0.0";
 
 	private CLIENT_IMPLEMENTATION clientImplementation = CLIENT_IMPLEMENTATION.HTTPURLCONNECTION;
 
@@ -43,5 +47,9 @@ public class WSConfig {
 
 	public boolean getHasTerminator(String server) {
 		return properties.get(server + ".hasTerminator").toLowerCase().equals("true");
+	}
+	
+	public String getVersion() {
+		return version;
 	}
 }

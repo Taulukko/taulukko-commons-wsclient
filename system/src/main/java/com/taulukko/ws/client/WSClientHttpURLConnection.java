@@ -3,6 +3,7 @@ package com.taulukko.ws.client;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -24,35 +25,41 @@ public class WSClientHttpURLConnection extends WSClient {
 		super(urlservice, hasTerminator);
 	}
 
-	public String execPost(String url, Map<String, Object> parameters) throws WSClientException {
+	public WSReponse execPost(String url, Map<String, Object> parameters) throws WSClientException {
 		try {
 			java.lang.System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 
 			url = prepareURL(url);
- 
-			HttpURLConnection con =  buildHttpURLConnection(url);
-			 
+
+			HttpURLConnection con = buildHttpURLConnection(url);
+
 			con.setRequestMethod("POST");
 
 			addRequestHeadProperties(con);
 
 			String urlParameters = parametersToQueryString(parameters);
-			 
+
 			writeReqiestParameters(con, urlParameters);
 
-			resolveReturnCode(con);
+			int responseCode = con.getResponseCode();
 
-			return extractOutput(con);
-  		} catch (Throwable e) { 
+			String responseOutput = extractOutput(con);
+			WSReponse response = new WSReponse();
+			response.setCode(responseCode);
+			response.setOutput(responseOutput);
+
+			return response;
+		} catch (Throwable e) {
 			throw new WSClientException(e);
 		}
 	}
-	public String execPost(String path) throws WSClientException {
+
+	public WSReponse execPost(String path) throws WSClientException {
 
 		return execPost(path, new HashMap<>());
 	}
 
-	public String execGet(String url) throws WSClientException {
+	public WSReponse execGet(String url) throws WSClientException {
 		try {
 
 			url = prepareURL(url);
@@ -64,20 +71,23 @@ public class WSClientHttpURLConnection extends WSClient {
 
 			addRequestHeadProperties(con);
 
-			resolveReturnCode(con);
+			int responseCode = con.getResponseCode();
+			String responseOutput = extractOutput(con);
+			WSReponse response = new WSReponse();
+			response.setCode(responseCode);
+			response.setOutput(responseOutput);
 
-			return extractOutput(con);
+			return response;
 
 		} catch (IOException e) {
 			throw new WSClientException(e);
 		}
 	}
 
-
 	/**
 	 * Convert parameters in query parameters
 	 */
-	public String execGet(String path, Map<String, Object> parameters) throws WSClientException {
+	public WSReponse execGet(String path, Map<String, Object> parameters) throws WSClientException {
 		try {
 			boolean havePreviousParameters = path.contains("?");
 			boolean haveMoreParameters = parameters.size() > 0;
@@ -99,16 +109,14 @@ public class WSClientHttpURLConnection extends WSClient {
 
 	}
 
-
-
-	public String exec(String path, Map<String, Object> parameters, boolean post) throws WSClientException {
+	public WSReponse exec(String path, Map<String, Object> parameters, boolean post) throws WSClientException {
 		if (post) {
 			return execPost(path, parameters);
 		} else {
 			return execGet(path, parameters);
 		}
 	}
-	
+
 	private String parametersToQueryString(Map<String, Object> parameters) throws UnsupportedEncodingException {
 		String query = "";
 
@@ -124,7 +132,7 @@ public class WSClientHttpURLConnection extends WSClient {
 
 		return query;
 	}
-	
+
 	private void addRequestHeadProperties(HttpURLConnection con) {
 		// add request header
 		con.setRequestProperty("User-Agent", USER_AGENT);
@@ -137,7 +145,6 @@ public class WSClientHttpURLConnection extends WSClient {
 		return con;
 	}
 
-
 	private void writeReqiestParameters(HttpURLConnection con, String urlParameters) throws IOException {
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -147,7 +154,16 @@ public class WSClientHttpURLConnection extends WSClient {
 	}
 
 	private String extractOutput(HttpURLConnection con) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+		InputStream input = null;
+
+		if (con.getResponseCode() == 200) {
+			input = con.getInputStream();
+		} else {
+			input = con.getErrorStream();
+		}
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
 
@@ -157,14 +173,6 @@ public class WSClientHttpURLConnection extends WSClient {
 		in.close();
 		return response.toString();
 
-	}
-
-	private void resolveReturnCode(HttpURLConnection con) throws IOException, WSClientException {
-		int responseCode = con.getResponseCode();
-
-		if (responseCode != 200) {
-			throw new WSClientException("Expected OK=200 but returned " + responseCode, responseCode);
-		}
 	}
 
 	private String prepareURL(String url) {
@@ -182,6 +190,5 @@ public class WSClientHttpURLConnection extends WSClient {
 		}
 		return url;
 	}
-
 
 }

@@ -3,7 +3,6 @@ package com.taulukko.ws.client;
 import org.apache.commons.lang3.NotImplementedException;
 
 import com.taulukko.ws.client.config.CLIENT_IMPLEMENTATION;
-import com.taulukko.ws.client.config.WSFileConfigurator;
 
 public class WSClientFactory extends WSBase {
 
@@ -20,6 +19,7 @@ public class WSClientFactory extends WSBase {
 	}
 
 	public static void setConfig(com.taulukko.ws.client.config.WSConfig config) throws Exception {
+		System.out.println("WSClient : New config " + config.getVersion() + " version loaded!" );
 		WSClientFactory.config = config;
 	}
 

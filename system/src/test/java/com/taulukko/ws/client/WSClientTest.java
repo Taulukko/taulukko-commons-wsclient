@@ -106,7 +106,7 @@ public class WSClientTest extends WSBaseTest {
 
 		String path = "test/sum/";
 
-		String output = client.execGet(path + "?number1=1&number2=2");
+		String output = client.execGet(path + "?number1=1&number2=2").getOutput();
 
 		Assert.assertEquals("3", output);
 
@@ -123,7 +123,7 @@ public class WSClientTest extends WSBaseTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path, parameters);
+		String output = client.execGet(path, parameters).getOutput();
 
 		Assert.assertEquals("3", output);
 
@@ -140,7 +140,7 @@ public class WSClientTest extends WSBaseTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path, parameters);
+		String output = client.execGet(path, parameters).getOutput();
 
 		Assert.assertEquals("3", output);
 
@@ -156,7 +156,7 @@ public class WSClientTest extends WSBaseTest {
 
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path + "?number1=1", parameters);
+		String output = client.execGet(path + "?number1=1", parameters).getOutput();
 
 		Assert.assertEquals("3", output);
 
@@ -174,7 +174,7 @@ public class WSClientTest extends WSBaseTest {
 
 		String path = "test/sumPost";
 
-		String response = client.execPost(path, parameters);
+		String response = client.execPost(path, parameters).getOutput();
 
 		Assert.assertTrue(response.contains("Error"));
 
@@ -192,7 +192,7 @@ public class WSClientTest extends WSBaseTest {
 
 		String path = "test/sumPost/";
 
-		String response = client.execPost(path, parameters);
+		String response = client.execPost(path, parameters).getOutput();
 
 		Assert.assertEquals("3", response);
 
@@ -212,7 +212,7 @@ public class WSClientTest extends WSBaseTest {
 
 			String path = "test/sumPost";
 
-			String response = client.execPost(path, parameters);
+			String response = client.execPost(path, parameters).getOutput();
 			Assert.assertEquals("3", response);
 
 		} catch (Throwable e) {
@@ -224,14 +224,13 @@ public class WSClientTest extends WSBaseTest {
 	public void simpleTest() throws WSClientException {
 		WSClient wsclient = WSClientFactory.getClient("get");
 
-		String out = wsclient.execGet("");
+		String out = wsclient.execGet("").getOutput();
 
 		Assert.assertTrue(out.contains("Host"));
 		Assert.assertTrue(out.contains("httpbin.org"));
 
 	}
-
-	@Test(expected = WSClientException.class)
+ 
 	public void execPostUnknownURL() throws WSClientException, InterruptedException {
 
 		WSClient client = WSClientFactory.getClient("util");
@@ -242,9 +241,9 @@ public class WSClientTest extends WSBaseTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execPost(path, parameters);
+		WSReponse response = client.execPost(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals(Integer.valueOf(404), response.getCode());
 	}
 
 }
