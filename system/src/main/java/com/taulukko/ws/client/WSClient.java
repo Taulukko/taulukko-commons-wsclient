@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -32,8 +33,7 @@ public class WSClient {
 
 	}
 
-	public String execPost(String path, Map<String, Object> parameters)
-			throws WSClientException {
+	public String execPost(String path, Map<String, Object> parameters) throws WSClientException {
 		return exec(path, parameters, true);
 	}
 
@@ -43,9 +43,8 @@ public class WSClient {
 
 	/**
 	 * Convert parameters in query parameters
-	 * */
-	public String execGet(String path, Map<String, Object> parameters)
-			throws WSClientException {
+	 */
+	public String execGet(String path, Map<String, Object> parameters) throws WSClientException {
 		String parametersQuery = "?";
 		boolean first = true;
 
@@ -67,8 +66,7 @@ public class WSClient {
 		return exec(path + parametersQuery, null, false);
 	}
 
-	public String exec(String path, Map<String, Object> parameters, boolean post)
-			throws WSClientException {
+	public String exec(String path, Map<String, Object> parameters, boolean post) throws WSClientException {
 
 		String url = urlservice;
 
@@ -78,18 +76,24 @@ public class WSClient {
 
 		url = urlservice + "/" + path;
 
-		boolean needTerminator = !url.endsWith("/") && !url.contains("?");
+		boolean haveQueryParameters = url.contains("?");
+		boolean needTerminator = !url.endsWith("/") && !haveQueryParameters;
+		needTerminator = needTerminator || (haveQueryParameters && !url.contains("/?"));
+
 		// separator is required against redirect error
 		if (needTerminator) {
-			url += "/";
+			if (!haveQueryParameters) {
+				url += "/";
+			} else {
+				url = StringUtils.replace(url, "?", "/?");
+			}
 		}
 
 		try {
 
 			URL newurl = new URL(url);
 
-			HttpURLConnection conn = (HttpURLConnection) newurl
-					.openConnection();
+			HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
 
 			conn.setReadTimeout(10000);
 			conn.setConnectTimeout(15000);
@@ -97,8 +101,7 @@ public class WSClient {
 				// change default method GET to POST
 				conn.setRequestMethod("POST");
 			} else {
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						(conn.getInputStream())));
+				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 				StringBuilder sb = new StringBuilder();
 				String output;
 				while ((output = br.readLine()) != null) {
@@ -115,14 +118,12 @@ public class WSClient {
 				Set<String> keys = parameters.keySet();
 
 				for (String key : keys) {
-					params.add(new BasicNameValuePair(key, parameters.get(key)
-							.toString()));
+					params.add(new BasicNameValuePair(key, parameters.get(key).toString()));
 				}
 			}
 
 			OutputStream os = conn.getOutputStream();
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-					os, "UTF-8"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 			writer.write(getQuery(params));
 			writer.flush();
 			writer.close();
@@ -130,8 +131,7 @@ public class WSClient {
 
 			conn.connect();
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					(conn.getInputStream())));
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 			StringBuilder sb = new StringBuilder();
 			String output;
 			while ((output = br.readLine()) != null) {
@@ -144,8 +144,7 @@ public class WSClient {
 		}
 	}
 
-	private String getQuery(List<NameValuePair> params)
-			throws UnsupportedEncodingException {
+	private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 

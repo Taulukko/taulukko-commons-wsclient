@@ -16,15 +16,15 @@
 	<groupId>com.taulukko.commons</groupId>
 	<artifactId>taulukko-commons-wsclient</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.7-2-0-SNAPSHOT</version>
+	<version>1.0.8</version>
 	<!-- -SNAPSHOT -->
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>4.11</junit.version>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<servlet.version>2.5</servlet.version>
-		<tomcat.version>8.0.20</tomcat.version>
+		<jettyVersion>7.2.0.v20101020</jettyVersion>
 	</properties>
 
 	<!-- [ means closet, inclusive. ) means open, excluisive. Eg. [1.0.0,2.0.0) 
@@ -42,69 +42,25 @@
 
 		<!-- for integration test propouses -->
 		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-core</artifactId>
-			<version>${tomcat.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-logging-juli</artifactId>
-			<version>${tomcat.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-			<version>${tomcat.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jasper</artifactId>
-			<version>${tomcat.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jasper-el</artifactId>
-			<version>${tomcat.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jsp-api</artifactId>
-			<version>${tomcat.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>2.2.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.1.13</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>test</scope>
-		</dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jettyVersion}</version>
+		</dependency>    
 
 
 		<!--compilation -->
- 
+
 		<dependency>
-		    <groupId>com.taulukko.commons</groupId>
-		    <artifactId>taulukko-commons-util</artifactId>
-		    <version>1.1.10-0-0</version>
+			<groupId>com.taulukko.commons</groupId>
+			<artifactId>taulukko-commons-util</artifactId>
+			<version>1.1.15</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
 		</dependency>
 
 
@@ -113,7 +69,7 @@
 			<artifactId>javaee-web-api</artifactId>
 			<version>6.0</version>
 		</dependency>
- 
+
 	</dependencies>
 
 	<build>

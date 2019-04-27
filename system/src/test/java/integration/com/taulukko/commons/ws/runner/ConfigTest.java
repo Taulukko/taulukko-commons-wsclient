@@ -30,8 +30,17 @@ public class ConfigTest {
 		WSClient client = WSClientFactory.getClient("util");
 
 		Assert.assertNotNull(client);
-		Assert.assertEquals("http://localhost:8181", Config
-				.<Config> getInstance(Config.class).getURL("util"));
+		Assert.assertEquals("http://localhost:8181", Config.getLastConfig().getURL("util"));
+
+	}
+
+	@Test
+	public void sanitize() throws WSClientException, InterruptedException {
+
+		String uri = "file:///C:\\Users\\7095587\\.m2\\repository\\org\\apache";
+
+		String expected = "file:///Users/7095587/.m2/repository/org/apache";
+		Assert.assertEquals(expected, Config.sanitizeURI(uri));
 
 	}
 
