@@ -24,7 +24,7 @@
 		<junit.version>4.11</junit.version>
 		<jdk.version>1.8</jdk.version>
 		<servlet.version>2.5</servlet.version>
-		<jettyVersion>9.4.14.v20181114</jettyVersion>
+		<jettyVersion>9.4.17.v20190418</jettyVersion>
 	</properties>
 
 	<!-- [ means closet, inclusive. ) means open, excluisive. Eg. [1.0.0,2.0.0) 
