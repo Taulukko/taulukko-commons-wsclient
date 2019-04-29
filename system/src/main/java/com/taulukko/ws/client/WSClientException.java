@@ -1,17 +1,14 @@
 package com.taulukko.ws.client;
 
-import com.taulukko.commons.TaulukkoException;
-
-public class WSClientException extends TaulukkoException {
+public class WSClientException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1439159452956049283L;
 
 	public static final Integer CLIENT_ERROR = -1;
 
 	private Integer code = 0;
-
-	public WSClientException(Throwable e) {
-		super(e);
-		this.code = -1;
-	}
 
 	public WSClientException(String message) {
 		super(message);
