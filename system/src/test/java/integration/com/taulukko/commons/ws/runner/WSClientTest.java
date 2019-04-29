@@ -18,6 +18,7 @@ import com.taulukko.commons.util.io.EFile;
 import com.taulukko.ws.client.WSClient;
 import com.taulukko.ws.client.WSClientException;
 import com.taulukko.ws.client.WSClientFactory;
+import com.taulukko.ws.client.WSReponse;
 
 public class WSClientTest {
 
@@ -76,9 +77,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path + "?number1=1&number2=2");
+		WSReponse output = client.execGet(path + "?number1=1&number2=2");
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 
 	}
 
@@ -93,9 +94,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path, parameters);
+		WSReponse output = client.execGet(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 
 	}
 
@@ -110,9 +111,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path, parameters);
+		WSReponse output = client.execGet(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 
 	}
 
@@ -126,9 +127,9 @@ public class WSClientTest {
 
 		parameters.put("number2", 2);
 
-		String output = client.execGet(path + "?number1=1", parameters);
+		WSReponse output = client.execGet(path + "?number1=1", parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 
 	}
 
@@ -144,9 +145,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execPost(path, parameters);
+		WSReponse output = client.execPost(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 	}
 
 	@Test
@@ -161,9 +162,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execPost(path, parameters);
+		WSReponse output = client.execPost(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 	}
 
 	@Test(expected = WSClientException.class)
@@ -178,9 +179,9 @@ public class WSClientTest {
 		parameters.put("number1", 1);
 		parameters.put("number2", 2);
 
-		String output = client.execPost(path, parameters);
+		WSReponse output = client.execPost(path, parameters);
 
-		Assert.assertEquals("3", output);
+		Assert.assertEquals("3", output.getOutput());
 	}
 
 }

@@ -33,18 +33,18 @@ public class WSClient {
 
 	}
 
-	public String execPost(String path, Map<String, Object> parameters) throws WSClientException {
+	public WSReponse execPost(String path, Map<String, Object> parameters) throws WSClientException {
 		return exec(path, parameters, true);
 	}
 
-	public String execGet(String path) throws WSClientException {
+	public WSReponse execGet(String path) throws WSClientException {
 		return exec(path, null, false);
 	}
 
 	/**
 	 * Convert parameters in query parameters
 	 */
-	public String execGet(String path, Map<String, Object> parameters) throws WSClientException {
+	public WSReponse execGet(String path, Map<String, Object> parameters) throws WSClientException {
 		String parametersQuery = "?";
 		boolean first = true;
 
@@ -66,7 +66,9 @@ public class WSClient {
 		return exec(path + parametersQuery, null, false);
 	}
 
-	public String exec(String path, Map<String, Object> parameters, boolean post) throws WSClientException {
+	public WSReponse exec(String path, Map<String, Object> parameters, boolean post) throws WSClientException {
+		
+		WSReponse response = new WSReponse();
 
 		String url = urlservice;
 
@@ -107,7 +109,8 @@ public class WSClient {
 				while ((output = br.readLine()) != null) {
 					sb.append(output);
 				}
-				return sb.toString();
+				response.setOutput(  sb.toString());
+				return response;
 			}
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
@@ -137,7 +140,9 @@ public class WSClient {
 			while ((output = br.readLine()) != null) {
 				sb.append(output);
 			}
-			return sb.toString();
+
+			response.setOutput(  sb.toString());
+			return response;
 
 		} catch (IOException e) {
 			throw new WSClientException(e.getMessage(), e);

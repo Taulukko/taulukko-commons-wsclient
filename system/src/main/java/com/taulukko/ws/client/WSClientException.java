@@ -7,7 +7,7 @@ public class WSClientException extends Exception {
 	private static final long serialVersionUID = -1439159452956049283L;
 
 	public static final Integer CLIENT_ERROR = -1;
-	
+
 	private Integer code = 0;
 
 	public WSClientException(String message) {
@@ -17,6 +17,10 @@ public class WSClientException extends Exception {
 	public WSClientException(String message, Integer code) {
 		super(message);
 		this.code = code;
+	}
+
+	public WSClientException(Throwable t) {
+		this(t.getMessage(), t);
 	}
 
 	public WSClientException(String message, Throwable t) {
