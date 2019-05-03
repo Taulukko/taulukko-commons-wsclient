@@ -1,27 +1,18 @@
 package com.taulukko.ws.client;
 
-import java.io.File;
+import com.taulukko.ws.client.config.WSConfig;
 
 public class WSClientFactory {
- 
-	private static String path = new File(".").getAbsolutePath();
 
-	public static void start(String path, final boolean j2ee) throws Exception {
-		WSClientFactory.path = path;
-
-		if (Config.getLastConfig() == null) {
-
-			Config.startDefault("ws-client", WSClientFactory.path);
-		}
-	}
+	private static WSConfig wsConfig;
 
 	public static WSClient getClient(String server) {
 
 		// loadProperties();
 		server = server.trim();
 
-		String url = Config.getLastConfig().getURL(server);
-		String contextName = Config.getLastConfig().getContextName(server);
+		String url = wsConfig.getURL(server);
+		String contextName = wsConfig.getContextName(server);
 
 		if (url == null) {
 			System.err.println(server + " not found. Check your ws-client.properties");
@@ -45,5 +36,15 @@ public class WSClientFactory {
 
 		return client;
 	}
- 
+
+	public static void setConfig(WSConfig wsConfig) {
+
+		WSClientFactory.wsConfig = wsConfig;
+	}
+
+	public static WSConfig getConfig() {
+
+		return WSClientFactory.wsConfig;
+	}
+
 }

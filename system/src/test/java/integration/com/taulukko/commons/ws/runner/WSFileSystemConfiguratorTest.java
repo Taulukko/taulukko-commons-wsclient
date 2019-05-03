@@ -6,16 +6,23 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.taulukko.commons.util.io.EFile;
-import com.taulukko.ws.client.Config;
 import com.taulukko.ws.client.WSClient;
 import com.taulukko.ws.client.WSClientException;
 import com.taulukko.ws.client.WSClientFactory;
+import com.taulukko.ws.client.WSFileSystemConfigurator;
+import com.taulukko.ws.client.config.WSConfig;
+import com.taulukko.ws.client.config.WSConfigBuilder;
+import com.taulukko.ws.client.config.WSConfigurator;
 
-public class ConfigTest {
+public class WSFileSystemConfiguratorTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		WSClientFactory.start(EFile.getClassLoaderPath(), false);
+		WSConfigurator wsConfigurator = new WSFileSystemConfigurator("test", EFile.getClassLoaderPath());
+
+		WSConfig wsConfig = new WSConfigBuilder().configurator(wsConfigurator).build();
+
+		WSClientFactory.setConfig(wsConfig);
 
 	}
 
@@ -30,7 +37,7 @@ public class ConfigTest {
 		WSClient client = WSClientFactory.getClient("util");
 
 		Assert.assertNotNull(client);
-		Assert.assertEquals("http://localhost:8181", Config.getLastConfig().getURL("util"));
+		Assert.assertEquals("http://localhost:8181", WSClientFactory.getConfig().getURL("util"));
 
 	}
 
@@ -40,7 +47,7 @@ public class ConfigTest {
 		String uri = "file:///C:\\Users\\7095587\\.m2\\repository\\org\\apache";
 
 		String expected = "file:///Users/7095587/.m2/repository/org/apache";
-		Assert.assertEquals(expected, Config.sanitizeURI(uri));
+		Assert.assertEquals(expected, WSFileSystemConfigurator.sanitizeURI(uri));
 
 	}
 

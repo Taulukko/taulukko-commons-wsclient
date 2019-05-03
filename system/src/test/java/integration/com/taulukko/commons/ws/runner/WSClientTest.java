@@ -18,7 +18,11 @@ import com.taulukko.commons.util.io.EFile;
 import com.taulukko.ws.client.WSClient;
 import com.taulukko.ws.client.WSClientException;
 import com.taulukko.ws.client.WSClientFactory;
+import com.taulukko.ws.client.WSFileSystemConfigurator;
 import com.taulukko.ws.client.WSReponse;
+import com.taulukko.ws.client.config.WSConfig;
+import com.taulukko.ws.client.config.WSConfigBuilder;
+import com.taulukko.ws.client.config.WSConfigurator;
 
 public class WSClientTest {
 
@@ -41,11 +45,11 @@ public class WSClientTest {
 			response.setContentType("application/json");
 			response.setStatus(HttpServletResponse.SC_OK);
 			baseRequest.setHandled(true);
-			response.getWriter().println( String.valueOf(Integer.valueOf(number1[0]) + Integer.valueOf(number2[0])));
+			response.getWriter().println(String.valueOf(Integer.valueOf(number1[0]) + Integer.valueOf(number2[0])));
 			return;
 		}
 		default: {
-			System.out.println("URI"+baseRequest.getRequestURI());
+			System.out.println("URI" + baseRequest.getRequestURI());
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
@@ -55,8 +59,12 @@ public class WSClientTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		WSClientFactory.start(EFile.getClassLoaderPath(), false);
-		
+		WSConfigurator wsConfigurator = new WSFileSystemConfigurator("test", EFile.getClassLoaderPath());
+
+		WSConfig wsConfig = new WSConfigBuilder().configurator(wsConfigurator).build();
+
+		WSClientFactory.setConfig(wsConfig);
+
 		server = new TestServer();
 		server.start(new FunctionalHandler(WSClientTest::handle));
 	}

@@ -12,10 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import com.taulukko.commons.util.config.ConfigObserver;
+import com.taulukko.ws.client.config.WSConfigurator;
 
-public class Config {
-
-	private Properties properties = null;
+public class WSFileSystemConfigurator extends WSConfigurator {
 
 	// //////////////////
 	// SERVER//
@@ -130,21 +129,12 @@ public class Config {
 
 	protected String realPath;
 
-	private static Config config = null;
+	public WSFileSystemConfigurator(String projectName, String realPath) throws URISyntaxException, Exception {
 
-	private Config() {
-	}
+		realPath = sanitizeURI(realPath);
 
-	public static void startDefault(String projectName, String realPath) throws Exception {
-
-		if (!realPath.endsWith("/") && !realPath.endsWith("\\")) {
-			realPath += "/";
-		}
-
-		config = new Config();
 		String uri = "file:///" + realPath + "config/" + projectName + ".properties";
-		config.startByURI(new URI(uri), projectName);
-
+		this.startByURI(new URI(uri), projectName);
 	}
 
 	public static String sanitizeURI(String uri) {
@@ -154,19 +144,12 @@ public class Config {
 		return uri;
 	}
 
-	public static Config getLastConfig() {
-		return config;
-	}
-
-	public void stopDefault() {
-	}
-
 	public String getURL(String server) {
-		return properties.getProperty(server + ".url");
+		return this.getProperties().get(server + ".url");
 	}
 
 	public String getContextName(String server) {
-		return properties.getProperty(server + ".contextName");
+		return this.getProperties().get(server + ".contextName");
 	}
 
 	protected void reloadProperties(String uri) throws URISyntaxException, Exception {
@@ -189,11 +172,11 @@ public class Config {
 		System.out.println(value);
 	}
 
-	public void startByURI(URI uri, String projectname) throws Exception {
+	private void startByURI(URI uri, String projectname) throws Exception {
 		startByURIInternal(uri, true, false, projectname);
 	}
 
-	public void startByURIInternal(URI uri, boolean tryAgain, boolean retryUsingJ2EE, String projectname)
+	private void startByURIInternal(URI uri, boolean tryAgain, boolean retryUsingJ2EE, String projectname)
 			throws Exception {
 
 		File file = new File(uri);
@@ -216,125 +199,131 @@ public class Config {
 		}
 
 		InputStream is = new FileInputStream(file.getAbsolutePath());
-		this.properties = new Properties();
-		this.properties.load(is);
+		Properties properties = new Properties();
+		properties.load(is);
 		is.close();
 
-		String property = getFromProperties("accessLevel", this.properties, this.accessLevel);
+		String property = getFromProperties("accessLevel", properties, this.accessLevel);
 		if (property != null) {
 			this.accessLevel = String.valueOf(property);
 		}
 
-		property = getFromProperties("clusterId", this.properties, this.clusterId);
+		property = getFromProperties("clusterId", properties, this.clusterId);
 		if (property != null) {
 			this.clusterId = property;
 		}
 
-		property = getFromProperties("emailSleepTime", this.properties, String.valueOf(this.emailSleepTime));
+		property = getFromProperties("emailSleepTime", properties, String.valueOf(this.emailSleepTime));
 		if (property != null) {
 			this.emailSleepTime = Integer.valueOf(property);
 		}
 
-		property = getFromProperties("accessPath", this.properties, this.accessPath);
+		property = getFromProperties("accessPath", properties, this.accessPath);
 		if (property != null) {
 			this.accessPath = String.valueOf(property);
 		}
 
-		property = getFromProperties("accessPattern", this.properties, this.accessPattern);
+		property = getFromProperties("accessPattern", properties, this.accessPattern);
 		if (property != null) {
 			this.accessPattern = String.valueOf(property);
 		}
 
-		property = getFromProperties("rootLevel", this.properties, this.rootLevel);
+		property = getFromProperties("rootLevel", properties, this.rootLevel);
 		if (property != null) {
 			this.rootLevel = String.valueOf(property);
 		}
 
-		property = getFromProperties("rootPath", this.properties, this.rootPath);
+		property = getFromProperties("rootPath", properties, this.rootPath);
 		if (property != null) {
 			this.rootPath = String.valueOf(property);
 		}
 
-		property = getFromProperties("rootPattern", this.properties, this.rootPattern);
+		property = getFromProperties("rootPattern", properties, this.rootPattern);
 		if (property != null) {
 			this.rootPattern = String.valueOf(property);
 		}
 
-		property = getFromProperties("serverCreated", this.properties, this.serverCreated);
+		property = getFromProperties("serverCreated", properties, this.serverCreated);
 		if (property != null) {
 			this.serverCreated = String.valueOf(property);
 		}
 
-		property = getFromProperties("serverDebug", this.properties, String.valueOf(this.serverDebug));
+		property = getFromProperties("serverDebug", properties, String.valueOf(this.serverDebug));
 		if (property != null) {
 			this.serverDebug = Boolean.valueOf(property);
 		}
 
-		property = getFromProperties("serverVersion", this.properties, this.serverVersion);
+		property = getFromProperties("serverVersion", properties, this.serverVersion);
 		if (property != null) {
 			this.serverVersion = String.valueOf(property);
 		}
 
-		property = getFromProperties("stdOutLevel", this.properties, this.stdOutLevel);
+		property = getFromProperties("stdOutLevel", properties, this.stdOutLevel);
 		if (property != null) {
 			this.stdOutLevel = String.valueOf(property);
 		}
 
-		property = getFromProperties("stdOutPattern", this.properties, this.stdOutPattern);
+		property = getFromProperties("stdOutPattern", properties, this.stdOutPattern);
 		if (property != null) {
 			this.stdOutPattern = String.valueOf(property);
 		}
 
-		property = getFromProperties("stdOutPath", this.properties, this.stdOutPath);
+		property = getFromProperties("stdOutPath", properties, this.stdOutPath);
 		if (property != null) {
 			this.stdOutPath = String.valueOf(property);
 		}
 
-		property = getFromProperties("sqlLevel", this.properties, this.sqlLevel);
+		property = getFromProperties("sqlLevel", properties, this.sqlLevel);
 		if (property != null) {
 			this.sqlLevel = String.valueOf(property);
 		}
 
-		property = getFromProperties("sqlPattern", this.properties, this.sqlPattern);
+		property = getFromProperties("sqlPattern", properties, this.sqlPattern);
 		if (property != null) {
 			this.sqlPattern = String.valueOf(property);
 		}
 
-		property = getFromProperties("sqlPath", this.properties, this.sqlPath);
+		property = getFromProperties("sqlPath", properties, this.sqlPath);
 		if (property != null) {
 			this.sqlPath = String.valueOf(property);
 		}
 
-		property = getFromProperties("emailSendEnabled", this.properties, String.valueOf(this.emailSendEnabled));
+		property = getFromProperties("emailSendEnabled", properties, String.valueOf(this.emailSendEnabled));
 		if (property != null) {
 			this.emailSendEnabled = Boolean.valueOf(property);
 		}
 
-		property = getFromProperties("browserShowJSErrors", this.properties, String.valueOf(this.browserShowJSErrors));
+		property = getFromProperties("browserShowJSErrors", properties, String.valueOf(this.browserShowJSErrors));
 		if (property != null) {
 			this.browserShowJSErrors = Boolean.valueOf(property);
 		}
 
-		property = getFromProperties("email", this.properties, this.email);
+		property = getFromProperties("email", properties, this.email);
 		if (property != null) {
 			this.email = property;
 		}
 
-		property = getFromProperties("emailPassword", this.properties, this.emailPassword);
+		property = getFromProperties("emailPassword", properties, this.emailPassword);
 		if (property != null) {
 			this.emailPassword = property;
 		}
 
-		property = getFromProperties("emailSmtp", this.properties, this.emailSmtp);
+		property = getFromProperties("emailSmtp", properties, this.emailSmtp);
 		if (property != null) {
 			this.emailSmtp = property;
 		}
 
-		property = getFromProperties("emailMaxFIFO", this.properties, String.valueOf(this.emailMaxFIFO));
+		property = getFromProperties("emailMaxFIFO", properties, String.valueOf(this.emailMaxFIFO));
 		if (property != null) {
 			this.emailMaxFIFO = Integer.parseInt(property);
 		}
 
+		copyFilePropertiesToInternalPropertiesMap(properties);
+
+	}
+
+	private void copyFilePropertiesToInternalPropertiesMap(Properties properties) {
+		properties.keySet().stream().forEach(k -> this.properties.put((String) k, (String) properties.get(k)));
 	}
 
 	@SuppressWarnings("unchecked")
